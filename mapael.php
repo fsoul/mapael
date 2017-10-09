@@ -15,11 +15,6 @@
             margin-top: 50px;
         }
 
-        #canvas_container {
-            width: 200px;
-            border: 1px solid #aaa;
-        }
-
         .container {
             max-width: 800px;
             margin: auto;
@@ -46,6 +41,16 @@
             display: none;
             color: #343434;
         }
+        .link {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 7s linear forwards;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
@@ -57,40 +62,6 @@
     <script src="/js/usa_states.js" charset="utf-8"></script>
 
     <script type="text/javascript">
-//        window.onload = function() {
-//            var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
-//            var tetronimo = paper.path("M 250 250 l 0 -50 l -50 0 l 0 -50 l -50 0 l 0 50 l -50 0 l 0 50 z");
-//            tetronimo.attr(
-//                {
-//                    gradient: '90-#526c7a-#64a0c1',
-//                    stroke: '#3b4449',
-//                    'stroke-width': 10,
-//                    'stroke-linejoin': 'round',
-//                    rotation: -90
-//                }
-//            );
-//
-//
-//            tetronimo.animate({rotation: 360, 'stroke-width': 1}, 2000, 'bounce', function() {
-//                /* callback after original animation finishes */
-//                this.animate({
-//                    rotation: -90,
-//                    stroke: '#3b4449',
-//                    'stroke-width': 10
-//                }, 1000);
-//            });
-//        };
-        window.onload = function() {
-            var r = Raphael("canvas_container", 200, 200),
-                p = r.path("M10,50C10,100,90,0,90,50C90,100,10,0,10,50Z").attr({stroke: "#ddd"}),
-                e = r.ellipse(10, 50, 4, 4).attr({stroke: "none", fill: "#f00"});
-            r.rect(0, 0, 200, 200).attr({stroke: "none", fill: "#000", opacity: 0}).click(function () {
-                e.attr({rx: 5, ry: 3}).animateAlong(p, 4000, true, function () {
-                    e.attr({rx: 4, ry: 4});
-                });
-            });
-        };
-
         $(function () {
             $(".mapcontainer").mapael({
                 map: {
@@ -147,23 +118,15 @@
 
                 // Update some plots and areas attributes ...
                 var opt = {
-                    mapOptions: {
-                        'areas': {},
-                        'plots': {},
-                        'links': {
-                            'kievottawa': {
-                                factor: -0.3,
-                                between: ['kiev', 'ottawa'],
-                                attrs: {
-                                    "stroke-width": 2
-                                },
-                                tooltip: {content: "Kiev - Ottawa"}
-                            }
-                        }
-                    },
-
                     animDuration: 500,
                     'deleteLinkKeys': ['kievottawa'],
+//                    'newPlots': {
+//                        qwee:{
+//                            latitude: 80.41,
+//                            longitude: -55.69,
+//                            tooltip: {content: "Ottawa<br />Population: 934243"}
+//                        }
+//                    },
                     'newLinks': {
                         'kievottawa': {
                             factor: -0.3,
@@ -173,46 +136,91 @@
                             },
                             tooltip: {content: "Kiev - Ottawa"}
                         }
+//                        'hi': {
+//                            factor: -0.3,
+//                            between: ['qwee', 'ottawa'],
+//                            attrs: {
+//                                "stroke-width": 2
+//                            }
+//                        }
                     }
                 };
 
                 $(".mapcontainer").trigger('update', [opt]);
 
-//                $(".mapcontainer").mapael({
-//                    map: {
-//                        name: "world_countries",
-//                        defaultArea: {
-//                            attrs: {
-//                                fill: "#f4f4e8"
-//                                , stroke: "#ced8d0"
+//                setTimeout(function(){
+//                    var newOpt = {
+//                        animDuration: 500,
+//                        'deleteLinkKeys': ['abc'],
+//                        'newLinks': {
+//                            'abc': {
+//                                factor: -0.3,
+//                                between: ['ottawa', 'qwee'],
+//                                attrs: {
+//                                    "stroke-width": 2
+//                                },
+//                                tooltip: {content: "Kiev - Ottawa"}
 //                            }
-//                        },
-//                        afterInit: function($self, paper, areas, plots, options){
-//                            var t = paper.path("M557.74104 105.98627");
-//                            console.log(t);
 //                        }
-//                    }
-//                });
+//                    };
+//
+//                    $(".mapcontainer").trigger('update', [newOpt]);
+//                }, 2000);
 
-                var arc = $('[data-id=kievottawa]').attr('d');
-                var kiev = $('[data-id=kiev]').attr('cx');
-                var ottawa = $('[data-id=ottawa]').attr('cx');
-
-                var c = Raphael("canvas_container", 800, 320);
-                var p = c.path("M" + kiev + " " + ottawa);
-
-                p.animate({path: arc}, 5000);
-
-                console.log(kiev);
-                console.log(ottawa);
+            });
+            $('.sendNewCoords').click(function(e){
+                e.preventDefault();
+                var data = $('#coords').serialize();
+                $.ajax({
+                    type: "POST",
+                    url: '/handler.php',
+                    data: data,
+                    success: function(response){
+                        var respData = JSON.parse(response);
+                        drawLead(respData);
+                    }
+                });
             });
         });
+        function drawLead(respData){
+            var newPlotName = respData['plotName'];
+            var newLinkName = 'canada' + newPlotName;
+
+            var opts = {
+                'newPlots': {
+                    'newPlot': {
+                        latitude: respData['lat'],
+                        longitude: respData['lon'],
+                    }
+                },
+                'newLinks': {
+                    'canadaNew': {
+                        factor: -0.3,
+                        between: ['newPlot', 'ottawa'],
+                        attrs: {
+                            "stroke-width": 2
+                        }
+                    }
+                }
+            };
+
+            $(".mapcontainer").trigger('update', [opts]);
+        }
     </script>
 
 </head>
 
 <body>
-<div id="canvas_container"></div>
+
+<div class="form_wrap">
+    <form id="coords" action="handler.php" method="post">
+        <input type="text" name="name" placeholder="name" value="Kair">
+        <input type="text" name="lat" placeholder="latitude" value="30.044281">
+        <input type="text" name="lon" placeholder="longitude" value="31.340002">
+        <button class="sendNewCoords">Send</button>
+    </form>
+</div>
+
 <div class="container">
 
     <h1>Map with links between the plotted cities</h1>
@@ -227,7 +235,6 @@
     <p><b>All example for jQuery Mapael are available <a href="https://www.vincentbroute.fr/mapael/">here</a>.</b></p>
 
 </div>
-
 
 </body>
 </html>
