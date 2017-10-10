@@ -102,12 +102,33 @@
                     'kiev':{
                         latitude: 50.43,
                         longitude: 30.52,
-                        tooltip: {content: "Kiev<br />Population: 37000000"}
+                        tooltip: {content: "Kiev<br />Population: 37000000"},
+                        type: "image",
+                        url: "http://www.neveldo.fr/mapael/assets/img/marker.png",
+                        width: 12,
+                        height: 40,
+                        text: {
+                            content: "Kiev",
+                            position: "top"
+                        }
                     },
                     ottawa:{
                         latitude: 45.41,
                         longitude: -75.69,
-                        tooltip: {content: "Ottawa<br />Population: 934243"}
+                        tooltip: {content: "Ottawa<br />Population: 934243"},
+                        text: {
+                            content: "Ottawa",
+                            position: "top",
+                            attrs: {
+                                "font-size": 16
+                                , "font-weight": "bold"
+                            },
+                            attrsHover: {
+                                "font-size": 16
+                                , "font-weight": "bold"
+                                , fill: "red"
+                            }
+                        }
                     }
                 },
                 // Links allow you to connect plots between them
@@ -190,12 +211,33 @@
                 'newPlots': {
                     'newPlot': {
                         latitude: respData['lat'],
-                        longitude: respData['lon'],
+                        longitude: respData['lon']
                     }
                 },
                 'newLinks': {
                     'canadaNew': {
                         factor: -0.3,
+                        between: ['newPlot', 'ottawa'],
+                        attrs: {
+                            "stroke-width": 2
+                        }
+                    },
+                    'canadaNew2': {
+                        factor: -0.4,
+                        between: ['newPlot', 'ottawa'],
+                        attrs: {
+                            "stroke-width": 2
+                        }
+                    },
+                    'canadaNew3': {
+                        factor: 0.1,
+                        between: ['newPlot', 'ottawa'],
+                        attrs: {
+                            "stroke-width": 2
+                        }
+                    },
+                    'canadaNew4': {
+                        factor: 0.2,
                         between: ['newPlot', 'ottawa'],
                         attrs: {
                             "stroke-width": 2
@@ -231,8 +273,6 @@
             <span>Alternative content for the map</span>
         </div>
     </div>
-
-    <p><b>All example for jQuery Mapael are available <a href="https://www.vincentbroute.fr/mapael/">here</a>.</b></p>
 
 </div>
 
