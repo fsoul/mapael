@@ -245,12 +245,20 @@
         <button class="sendNewCoords">Send</button>
     </form>
     <br>
-    <form id="ip" action="handler.php">
+    <!--<form id="ip" action="handler.php">
         <select name="country" id="country">
             <option value="156.204.19.160">Egypt</option>
             <option value="37.239.46.26">Iraq</option>
             <option value="49.98.135.152">Japan</option>
             <option value="15.154.195.210">Australia</option>
+        </select>
+    </form>-->
+    <form id="ip" action="handler.php">
+        <select name="country" id="country">
+            <option value="EG">Egypt</option>
+            <option value="IQ">Iraq</option>
+            <option value="JP">Japan</option>
+            <option value="AU">Australia</option>
         </select>
     </form>
 </div>
