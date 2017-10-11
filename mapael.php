@@ -140,14 +140,7 @@
                 // Update some plots and areas attributes ...
                 var opt = {
                     animDuration: 500,
-                    'deleteLinkKeys': ['kievottawa'],
-//                    'newPlots': {
-//                        qwee:{
-//                            latitude: 80.41,
-//                            longitude: -55.69,
-//                            tooltip: {content: "Ottawa<br />Population: 934243"}
-//                        }
-//                    },
+                    'deleteLinkKeys': 'all',
                     'newLinks': {
                         'kievottawa': {
                             factor: -0.3,
@@ -157,38 +150,12 @@
                             },
                             tooltip: {content: "Kiev - Ottawa"}
                         }
-//                        'hi': {
-//                            factor: -0.3,
-//                            between: ['qwee', 'ottawa'],
-//                            attrs: {
-//                                "stroke-width": 2
-//                            }
-//                        }
                     }
                 };
 
                 $(".mapcontainer").trigger('update', [opt]);
-
-//                setTimeout(function(){
-//                    var newOpt = {
-//                        animDuration: 500,
-//                        'deleteLinkKeys': ['abc'],
-//                        'newLinks': {
-//                            'abc': {
-//                                factor: -0.3,
-//                                between: ['ottawa', 'qwee'],
-//                                attrs: {
-//                                    "stroke-width": 2
-//                                },
-//                                tooltip: {content: "Kiev - Ottawa"}
-//                            }
-//                        }
-//                    };
-//
-//                    $(".mapcontainer").trigger('update', [newOpt]);
-//                }, 2000);
-
             });
+
             $('.sendNewCoords').click(function(e){
                 e.preventDefault();
                 var data = $('#coords').serialize();
@@ -202,6 +169,22 @@
                     }
                 });
             });
+
+            $('#country').change(function(e){
+                var data = 'ip=' + e.target.value;
+                $.ajax({
+                    type: "POST",
+                    url: '/select-handler.php',
+                    data: data,
+                    success: function(response){
+                        var respData = JSON.parse(response);
+                        $.each(respData, function(indx, el){
+                            console.log(el);
+                        });
+                    }
+                });
+            });
+
         });
         function drawLead(respData){
             var newPlotName = respData['plotName'];
@@ -260,6 +243,15 @@
         <input type="text" name="lat" placeholder="latitude" value="30.044281">
         <input type="text" name="lon" placeholder="longitude" value="31.340002">
         <button class="sendNewCoords">Send</button>
+    </form>
+    <br>
+    <form id="ip" action="handler.php">
+        <select name="country" id="country">
+            <option value="156.204.19.160">Egypt</option>
+            <option value="37.239.46.26">Iraq</option>
+            <option value="49.98.135.152">Japan</option>
+            <option value="15.154.195.210">Australia</option>
+        </select>
     </form>
 </div>
 
